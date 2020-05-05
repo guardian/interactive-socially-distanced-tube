@@ -7,3 +7,31 @@
     margin: 0;
     padding: 0;
 }
+
+.interactive-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.canvas-wrapper {
+    position: relative;
+}
+
+canvas {
+    position: absolute;;
+    left:0;
+    top:0;
+}
+
+.controls {
+    display: flex;
+    flex-direction: row;
+}
+
+button {
+    border-radius: 50%;
+    background-color:lime;
+    width: 50px;
+    height: 50px;
+    margin: 0 1em;
+}
