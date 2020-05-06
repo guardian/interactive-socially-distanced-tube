@@ -5,7 +5,7 @@
 
 .interactive-atom {
     margin: 0;
-    padding: 0;
+    padding: .5em 1em;
 }
 
 .interactive-wrapper {
@@ -28,10 +28,17 @@ canvas {
     flex-direction: row;
 }
 
+h2, p {
+    margin: .2em 0;
+}
+
 button {
-    border-radius: 50%;
-    background-color:lime;
-    width: 50px;
-    height: 50px;
-    margin: 0 1em;
+    background-color: lightblue;
+    width: 100px;
+    height: 40px;
+    margin: 0 1em 0 0;
+    border: 1px solid black;
+}
+button:active {
+    background-color: #56a5be;
 }
