@@ -16,8 +16,8 @@ const spaceInTrain = trainW - (trainOffset * 2) - yellowLineOffset - yellowLineW
 
 // CHANGE THESE VARIABLES //
 const numParticles = 1005;
-const dotsPerTrain = 7;
-const dotsPerTrainNormal = 42;
+const dotsPerTrain = 42;
+const numberOfTrains = 24; //? 24
 
 // Particle consts
 const particleRadius = 5;
@@ -34,7 +34,6 @@ const timeToStation = 5;
 const timeToStationMs = timeToStation * 1000
 const waitForTrain = 2;
 const trainInterval = 2; 
-const numberOfTrains = 24;
 let currentTrain = 1;  //modified below
 
 // Timer consts 
@@ -64,9 +63,9 @@ const tickClock = () => {
     if(clockMin === 59) {
         clockMin = 0; 
         clockHour = 9;
+        tickClock()
     }
     if(clockHour === 9){
-       tickClock();
        clearInterval(clockIntrvl);
        clearTimeout(clockDelay);
     }
@@ -92,7 +91,45 @@ const calcBoardTrainDelay = (train, startDelay, travelTime) => {
     return baseDelay + (train * trainInterval); 
 }
 
-const calcTrainPos = trainEdge + Math.random() * spaceInTrain;
+const calcTrainPos = () => trainEdge + Math.random() * spaceInTrain;
+
+const setUpAnimation = (particle) => {
+
+    // let toTrainTween = gsap.to(particle, 0.5, {
+    //     x: calcTrainPos(),
+    //     delay: calcBoardTrainDelay(particle.train, startDelay, particle.travelTime), //max out at total time.
+    //     ease: "power1.inOut"
+    //   })
+    // let trainTween = gsap.to(particle, 1, {
+    //     y: particle.gettingOn ? (h - particle.midY) * -1 : particle.midY + 3, // move them out at a steady pace ,each covers the same distance
+    //     delay: 0.5,
+    //     ease: particle.gettingOn ? "power2.in" : "steps",
+    //   })
+
+
+    let tl = gsap.timeline()
+          .to(particle, particle.travelTime, {
+            x: particle.midX,
+            y: particle.midY,
+            delay: startDelay,
+            ease: "rough"
+          }) 
+          .to(particle, 0.5, {
+            x: calcTrainPos(),
+            delay: calcBoardTrainDelay(particle.train, startDelay, particle.travelTime), //max out at total time.
+            ease: "power1.inOut"
+          })
+          .to(particle, 1, {
+            y: particle.gettingOn ? (h - particle.midY) * -1 : particle.midY + 3, // move them out at a steady pace ,each covers the same distance
+            delay: 0.5,
+            ease: particle.gettingOn ? "power2.in" : "steps",
+          })
+    
+    // if(particle.gettingOn){
+    //     tl.add(toTrainTween).add(trainTween);
+    // }
+    return tl;
+}
 
 
 class Particle {
@@ -105,23 +142,7 @@ class Particle {
         this.index = index;
         this.gettingOn = train <= numberOfTrains;
         this.travelTime = Math.random() * (timeToStation - waitForTrain);
-        this.animation = gsap.timeline()
-          .to(this, this.travelTime, {
-            x: this.midX,
-            y: this.midY,
-            delay: startDelay,
-            ease: "rough"
-          })
-          .to(this, 0.5, {
-            x: calcTrainPos(this.midX),
-            delay: calcBoardTrainDelay(this.train, startDelay, this.travelTime), //max out at total time.
-            ease: "power1.inOut"
-          })
-          .to(this, 1, {
-            y: this.gettingOn ? (h - this.midY) * -1 : this.midY + 3, // move them out at a steady pace ,each covers the same distance
-            delay: 0.5,
-            ease: this.gettingOn ? "power2.in" : "steps",
-          })
+        this.animation = setUpAnimation(this)
     }
     draw (ctx){
         ctx.save();
