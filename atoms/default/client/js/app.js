@@ -4,13 +4,13 @@ import gsap from "gsap";
 const canvas = document.querySelector("#normal");
 const ctx = canvas.getContext("2d");
 const clock = document.querySelector("#clock");
-const w = 700;
-const h = 300;
-const stationW = 600;
+const w = 500;
+const h = 400;
+const stationW = 450;
 const trainW = w - stationW;
-const yellowLineOffset = 15;
+const yellowLineOffset = 12;
 const yellowLineWidth = 10;
-const trainOffset = 20;
+const trainOffset = 10;
 const trainEdge = w - (trainW - yellowLineOffset) + trainOffset; // x position of the edge of train plus 10 padding;
 const spaceInTrain = trainW - (trainOffset * 2) - yellowLineOffset - yellowLineWidth;
 
@@ -33,11 +33,12 @@ const numColsInStation = Math.floor((stationW - particleOffset * 2) / particleSp
 const timeToStation = 5;
 const timeToStationMs = timeToStation * 1000
 const waitForTrain = 2;
-const trainInterval = 2; 
+const trainInterval = 1.3; 
+const timeToLeave = 0.9;
 let currentTrain = 1;  //modified below
 
 // Timer consts 
-const totalTime = numberOfTrains * trainInterval; // NB not including time to station
+const totalTime = numberOfTrains * trainInterval + timeToLeave; // NB not including time to station
 const timePerMin = (totalTime / 60) * 1000; // time in milliseconds for each tick of the clock 
 let clockIntrvl;
 let clockDelay;
@@ -65,9 +66,10 @@ const tickClock = () => {
         clockHour = 9;
         tickClock()
     }
-    if(clockHour === 9){
+    if(clockHour === 9 & clockMin === 2){
        clearInterval(clockIntrvl);
        clearTimeout(clockDelay);
+       pauseAll();
     }
     clockMin++;
 }
@@ -119,9 +121,9 @@ const setUpAnimation = (particle) => {
             delay: calcBoardTrainDelay(particle.train, startDelay, particle.travelTime), //max out at total time.
             ease: "power1.inOut"
           })
-          .to(particle, 1, {
+          .to(particle, timeToLeave, {
             y: particle.gettingOn ? (h - particle.midY) * -1 : particle.midY + 3, // move them out at a steady pace ,each covers the same distance
-            delay: 0.5,
+            delay: 0.3,
             ease: particle.gettingOn ? "power2.in" : "steps",
           })
     
@@ -168,6 +170,12 @@ for (let i = 0; i < numParticles; i++) {
     train > currentTrain && currentTrain++; // bump currentTrain if previous ran out of space
 }
 
+const pauseAll = () => {
+    arrParticles.forEach((particle) => {
+        particle.animation.kill();
+    }) 
+}
+
 const render = () => {
     ctx.clearRect(0, 0, w, h);
     setUpStation(ctx);
@@ -175,10 +183,18 @@ const render = () => {
     arrParticles.forEach((particle) => {
         particle.draw(ctx);
     })
-    
 }
+
+
+
 //wait till everyone is at the station, then start ticker;
 const startClock = () => clockIntrvl = setInterval(tickClock, timePerMin);
 clockDelay = window.setTimeout(startClock, timeToStationMs);
 
 gsap.ticker.add(render);
+
+try{
+    window.resize();
+} catch{
+    console.log("not in a iframe");
+}

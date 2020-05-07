@@ -11,16 +11,11 @@
 .interactive-wrapper {
     display: flex;
     flex-direction: column;
+    
 }
 
 .canvas-wrapper {
-    position: relative;
-}
-
-canvas {
-    position: absolute;;
-    left:0;
-    top:0;
+    margin: auto;
 }
 
 .controls {
