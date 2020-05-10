@@ -19,6 +19,8 @@ const canvasConfig = {
     yellowLineOffset : 15,
     yellowLineWidth : 5,
     trainOffset: 25,
+    doorPosition1: 0.2,
+    doorPosition2: 0.8
 }
 
 const {w, h, stationW, yellowLineOffset, yellowLineWidth, trainOffset} = canvasConfig;

@@ -3,7 +3,7 @@ import {numParticles, numberOfTrains, canvas, ctx, clock, toggle, toggleLabel, r
     animationConfig, timeToStationMs} from "./constants.js"
 import {setUpAnimation} from "./animation.js"
 
-const {w, h, stationW, yellowLineOffset, yellowLineWidth} = canvasConfig;
+const {w, h, stationW, yellowLineOffset, yellowLineWidth, doorPosition1, doorPosition2} = canvasConfig;
 const {particleRadius, particleOffset, particleColor} = particleConfig;
 const {timeToStation, waitForTrain, trainInterval, timeToLeave, timeToBoard} = animationConfig; 
 
@@ -41,15 +41,15 @@ const setUpStation = (ctx) => {
 
     //draw doors
     ctx.fillStyle = "#EDEDED";
-    ctx.fillRect(0, (h * 0.8) - 25, 20, 50);  //extract these variables 
+    ctx.fillRect(0, (h * doorPosition2) - 25, 20, 50);  //extract these variables 
     ctx.fillStyle = "#000";
-    ctx.strokeRect(0, (h * 0.8) - 25, 20, 50);
+    ctx.strokeRect(0, (h * doorPosition2) - 25, 20, 50);
     
 
     ctx.fillStyle = "#EDEDED";
-    ctx.fillRect(0, (h * 0.2) - 25, 20, 50)
+    ctx.fillRect(0, (h * doorPosition1) - 25, 20, 50)
     ctx.fillStyle = "#000";
-    ctx.strokeRect(0, (h * 0.2) - 25, 20, 50)
+    ctx.strokeRect(0, (h * doorPosition1) - 25, 20, 50)
 }
 
 const tickClock = () => {
