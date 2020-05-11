@@ -50,22 +50,20 @@ const drawDoors = (ctx) => {
 
 }
 
-const drawTrain = (ctx, startX, startY) => {
+const drawTrain = (ctx, startX) => {
+    ctx.save();
     ctx.fillStyle = "#000";
+
     ctx.roundedRect(startX, stationH, carriageLength, (h - stationH), 15, ctx);
-    ctx.stroke()
 
-    ctx.fillStyle = "#000";
     ctx.roundedRect(startX + carriageLength + carriagePadding, stationH, carriageLength, (h - stationH), 15, ctx);
-    ctx.stroke()
 
-    ctx.fillStyle = "#000";
     ctx.roundedRect(startX + carriageLength * 2 + carriagePadding * 2, stationH, carriageLength, (h - stationH), 15, ctx);
-    ctx.stroke()
 
-    ctx.fillStyle = "#000";
     ctx.roundedRect(startX + carriageLength * 3 + carriagePadding * 3, stationH, carriageLength, (h - stationH), 15, ctx);
     ctx.stroke()
+
+    ctx.restore();
 
 }
 

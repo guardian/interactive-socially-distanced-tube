@@ -1,5 +1,6 @@
 
 // Canvas consts
+const canvasWrapper = document.querySelector(".interactive-wrapper")
 const canvas = document.querySelector("#normal");
 const ctx = canvas.getContext("2d");
 const clock = document.querySelector("#clock");
@@ -7,24 +8,30 @@ const toggle = document.querySelector("#distance-toggle");
 const toggleLabel = document.querySelector("#toggle-label");
 const runButton = document.querySelector("#run");
 
+const adjustedW = canvasWrapper.offsetWidth;
+const isWide = adjustedW > 550;
+const adjustedH = isWide ? 450 : 300;
+
+console.log("el width is --->", adjustedW );
+
 
 // CHANGE THESE VARIABLES
 const numParticles = 1005;
 const numberOfTrains = 24; //? 24
 
 const canvasConfig = {
-    w : 640,
-    h : 400,
-    stationH: 325,
-    stationW : 580,
-    trainOffset: 25,
+    w : adjustedW,
+    h : adjustedH,
+    stationH: isWide ? 375 : 250,
+    trainOffset: isWide ? 25 : 12,
     doorPosition: 0.05,
     doorWidth: 30,
     doorHeight: 60,
-    doorPadding: 5,
-    carriageLength: 150,
+    doorPadding: isWide ? 5 : 0,
+    carriageLength: isWide ? 140 : adjustedW / 4.5,
     carriagePadding: 2,
-    numCarriages: 4
+    numCarriages: 4,
+    trackHeight: 15,
 }
 
 const {w, h, stationH, trainOffset, doorWidth, doorPadding} = canvasConfig;
@@ -34,10 +41,10 @@ const spaceInTrain = trainH - (trainOffset * 2);
 
 // Particle consts
 const particleConfig = {
-   particleRadius: 5,
-   particleOffset: 10, //offset from top,
+   particleRadius: isWide ? 5 : 3,
+   particleOffset: isWide ? 10 : 5, //offset from top,
    particleColor: "#121212",
-   angryParticleColor: "red",
+   angryParticleColor: "#AB0613",
 }
 
 const { particleRadius, particleOffset} = particleConfig;

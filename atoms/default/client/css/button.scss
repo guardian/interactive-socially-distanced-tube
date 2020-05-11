@@ -1,0 +1,81 @@
+/* 3. Tertiary md icon-right */
+
+
+/* Auto Layout */
+#run {
+    display: flex;
+    flex-direction: column;
+    padding: 0px;
+
+    position: static;
+    left: 0%;
+    right: 0%;
+    top: 0%;
+    bottom: 0%;
+
+    .button-outer {
+        /* Auto Layout */
+        display: flex;
+        flex-direction: column;
+        padding: 7px 17px;
+
+        position: static;
+        left: 0%;
+        right: 0%;
+        top: 0%;
+        bottom: 0%;
+
+        /* News / news.300 */
+        border: 1px solid #AB0613;
+        box-sizing: border-box;
+        border-radius: 24px;
+    
+        &:hover {
+            background: #FFF4F2;
+            cursor: pointer;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: row;
+            padding: 0px;
+            
+            position: static;
+            width: 100px;
+            height: 30px;
+            left: 5px;
+            top: 0px;
+            .text {
+                position: static;
+                left: 0%;
+                right: 0%;
+                top: 0%;
+                bottom: 4.55%;
+        
+                font-family: 'Guardian Text Sans Web', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
+                font-style: normal;
+                font-weight: bold;
+                font-size: 17px;
+                line-height: 21px;
+                display: flex;
+                align-items: center;
+                /* News / news.300 */
+                color: #AB0613;
+                cursor: pointer;
+            }
+            .icon {
+                /* Arrows right */
+                position: relative;
+                left: 13.33%;
+                right: 9.92%;
+                top: 20%;
+                bottom: 13.67%;
+
+                
+            }
+        }
+    }
+}
+
+
+

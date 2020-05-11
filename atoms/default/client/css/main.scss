@@ -2,16 +2,18 @@
 @import "mq";
 @import "palette";
 @import "toggle";
+@import "button";
 // @import "enhancer";
 
-//mobile
-// @include fs-headline(4);
-// font-weight: 700;
 
 h1, h2, h3 {
     @include fs-headline(6);
     font-weight: 700;
+    @media(max-width: 600px) {
+        @include fs-headline(4);
+    }
 }
+
 
 body {
     @include f-bodyCopy;
@@ -34,6 +36,12 @@ h3, h3 {
     margin: .2em 0;
 }
 
+small {
+    font-size: 14px;
+    color: $neutral-60;
+    font-family: 'Guardian Text Sans Web', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
+}
+
 .interactive-atom {
     margin: 0;
     padding: .5em 1em;
@@ -54,19 +62,3 @@ h3, h3 {
     flex-direction: row;
 }
 
-button {
-    background-color: white;
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
-    margin: 0 10px;
-    border-radius: 34px;
-}
-button:hover {
-    background-color: #ccc;
-}
-button:active {
-    background-color: darkgrey;
-    color: white;
-}
