@@ -10,23 +10,27 @@ const runButton = document.querySelector("#run");
 
 // CHANGE THESE VARIABLES
 const numParticles = 1005;
-const numberOfTrains = 3; //? 24
+const numberOfTrains = 24; //? 24
 
 const canvasConfig = {
     w : 640,
-    h : 300,
+    h : 400,
+    stationH: 325,
     stationW : 580,
-    yellowLineOffset : 15,
-    yellowLineWidth : 5,
     trainOffset: 25,
-    doorPosition1: 0.2,
-    doorPosition2: 0.8
+    doorPosition: 0.05,
+    doorWidth: 30,
+    doorHeight: 60,
+    doorPadding: 5,
+    carriageLength: 150,
+    carriagePadding: 2,
+    numCarriages: 4
 }
 
-const {w, h, stationW, yellowLineOffset, yellowLineWidth, trainOffset} = canvasConfig;
-const trainW = w - stationW;
-const trainEdge = w - (trainW - yellowLineOffset) + trainOffset; // x position of the edge of train plus 10 padding;
-const spaceInTrain = trainW - (trainOffset * 2) - yellowLineOffset - yellowLineWidth;
+const {w, h, stationH, trainOffset, doorWidth, doorPadding} = canvasConfig;
+const trainH = h - stationH;
+const trainEdge = stationH + trainOffset; // x position of the edge of train plus 10 padding;
+const spaceInTrain = trainH - (trainOffset * 2);
 
 // Particle consts
 const particleConfig = {
@@ -38,24 +42,27 @@ const particleConfig = {
 
 const { particleRadius, particleOffset} = particleConfig;
 const particleSpacing = particleRadius * 2 + 0.5 * particleRadius;
-const numParticlesInCol = Math.floor((h - particleOffset * 2) / particleSpacing);
-const numColsInStation = Math.floor((stationW - particleOffset * 2) / particleSpacing);
+const numParticlesInRow = Math.floor((w - (doorWidth + doorPadding + particleOffset) * 2) / particleSpacing);
+const numRowsInStation = Math.floor((stationH - particleOffset) / particleSpacing);
 
 // Animation consts 
 const animationConfig = {
     timeToStation : 5,
     waitForTrain : 2,
-    trainInterval : 1.3, 
     timeToLeave : 0.9,
-    timeToBoard : 1,
+    timeToBoard : 0.6,
+    trainTimeToArrive: 0.9,
+    afterBoardDelay: 0.3
 }
 
-const {timeToStation} = animationConfig; 
-const timeToStationMs = timeToStation * 1000
+
+const {timeToStation, trainTimeToArrive, timeToBoard, afterBoardDelay, timeToLeave} = animationConfig; 
+const timeToStationMs = timeToStation * 1000;
+const trainInterval = trainTimeToArrive +  timeToBoard + afterBoardDelay + timeToLeave// add together
 
 
 export {numParticles, numberOfTrains, 
     canvas, ctx, clock, toggle, toggleLabel, runButton,
-    canvasConfig, trainW, trainEdge, spaceInTrain,
-    particleConfig, particleSpacing, numParticlesInCol, numColsInStation,
-    animationConfig, timeToStationMs}
+    canvasConfig, trainH, trainEdge, spaceInTrain,
+    particleConfig, particleSpacing, numParticlesInRow, numRowsInStation,
+    animationConfig, timeToStationMs, trainInterval}

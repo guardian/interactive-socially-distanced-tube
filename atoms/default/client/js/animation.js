@@ -1,8 +1,8 @@
 import gsap from "gsap";
-import {canvasConfig, trainEdge, spaceInTrain, animationConfig, numberOfTrains} from "./constants.js"
+import {canvasConfig, trainEdge, spaceInTrain, animationConfig, numberOfTrains, trainInterval} from "./constants.js"
 
-const {h} = canvasConfig;
-const {timeToStation, trainInterval, timeToLeave, timeToBoard} = animationConfig; 
+const {w} = canvasConfig;
+const {timeToStation, timeToLeave, timeToBoard, trainTimeToArrive, afterBoardDelay} = animationConfig; 
 
 const calcBoardTrainDelay = (train, delay, travelTime) => {
     const base = timeToStation - delay - travelTime;
@@ -29,14 +29,14 @@ const setUpAnimation = (particle) => {
           }) 
     
     if(gettingOn){
-        tl.to(particle, 0.5, {
-            x: calcTrainPos(),
+        tl.to(particle, timeToBoard, {
+            y: calcTrainPos(),
             delay: calcBoardTrainDelay(train, startDelay, travelTime), //max out at total time.
             ease: "power1.inOut"
           })
         tl.to(particle, timeToLeave, {
-            y: (h - midY) * -1, // move them out at a steady pace ,each covers the same distance
-            delay: 0.3,
+            x: w + midX, // move them out at a steady pace ,each covers the same distance
+            delay: afterBoardDelay,
             ease: "power2.in"
           })
     } 
@@ -53,5 +53,24 @@ const setUpAnimation = (particle) => {
     return tl;
 }
 
-export {setUpAnimation};
+const setUpTrainAnimation = (train) => {
+    let tl = gsap.timeline();
+    const {midX, startDelay, trainNumber} = train;
+
+    //move into platform
+    tl.to(train, trainTimeToArrive, {
+        x: midX,
+        delay: startDelay + (trainInterval * trainNumber), // different for each train
+        ease: "power2.out"
+    })
+    // move out of platform
+    tl.to(train, timeToLeave, {
+        x: w + midX,
+        delay: timeToBoard + afterBoardDelay,
+        ease: "power2.in"
+    })
+
+}
+
+export {setUpAnimation, setUpTrainAnimation};
 

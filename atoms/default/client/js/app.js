@@ -1,15 +1,15 @@
 import gsap from "gsap";
-import {numParticles, numberOfTrains, canvas, ctx, clock, toggle, toggleLabel, runButton, canvasConfig, trainW, particleConfig, particleSpacing, numParticlesInCol, numColsInStation,
-    animationConfig, timeToStationMs} from "./constants.js"
-import {setUpAnimation} from "./animation.js"
+import {numParticles, numberOfTrains, canvas, ctx, clock, toggle, toggleLabel, runButton, canvasConfig, particleConfig, particleSpacing, numParticlesInRow,
+    animationConfig, timeToStationMs, trainInterval} from "./constants.js"
+import {setUpAnimation, setUpTrainAnimation} from "./animation.js"
+import {roundedRect, drawDoors, drawTrain} from "./background.js"
 
-const {w, h, stationW, yellowLineOffset, yellowLineWidth, doorPosition1, doorPosition2} = canvasConfig;
+const {w, h, stationH, doorPosition, doorWidth, doorHeight, doorPadding, carriageLength, carriagePadding, numCarriages} = canvasConfig;
 const {particleRadius, particleOffset, particleColor} = particleConfig;
-const {timeToStation, waitForTrain, trainInterval, timeToLeave, timeToBoard} = animationConfig; 
+const {timeToStation, waitForTrain, timeToLeave, timeToBoard, trainTimeToArrive} = animationConfig; 
 
 // CHANGE THIS VARIABLE 
 let dotsPerTrain = 42;
-
 
 // Timer consts 
 const totalTime = numberOfTrains * trainInterval + timeToLeave + timeToBoard; // NB not including time to station
@@ -23,6 +23,7 @@ let clockDelay;
 let currentTrain = 1;
 
 let arrParticles = [];
+let arrTrains = [];
 let startDelay = 0; 
 // everyone should get there 2 seconds before train leaves, eg everyone gets there in 3 secs.
 let startDelayInterval = (timeToStation - waitForTrain) / numParticles;
@@ -30,26 +31,16 @@ let startDelayInterval = (timeToStation - waitForTrain) / numParticles;
 // set up canvas
 canvas.width = w;
 canvas.height = h;
+// weird hack for rounded rectangles 
+CanvasRenderingContext2D.prototype.roundedRect = roundedRect;
 
 const setUpStation = (ctx) => {
-    //draw train area
-    ctx.fillStyle = "#FF7F7F";
-    ctx.strokeRect((stationW + yellowLineOffset), 0, (trainW - 15), h);
-    // draw yellow line
-    ctx.fillStyle = "#e5e500";
-    ctx.fillRect(stationW, 0, yellowLineWidth, h);
+    //draw train tracks
+    // ctx.fillStyle = "#000";
+    // ctx.lineWidth = 2;
+    // ctx.strokeRect(0, stationH, w, (h - stationH));
 
-    //draw doors
-    ctx.fillStyle = "#EDEDED";
-    ctx.fillRect(0, (h * doorPosition2) - 25, 20, 50);  //extract these variables 
-    ctx.fillStyle = "#000";
-    ctx.strokeRect(0, (h * doorPosition2) - 25, 20, 50);
-    
-
-    ctx.fillStyle = "#EDEDED";
-    ctx.fillRect(0, (h * doorPosition1) - 25, 20, 50)
-    ctx.fillStyle = "#000";
-    ctx.strokeRect(0, (h * doorPosition1) - 25, 20, 50)
+    drawDoors(ctx);
 }
 
 const tickClock = () => {
@@ -66,23 +57,39 @@ const tickClock = () => {
 }
 
 // start it out from one door or another 
-const calcDotStartY = (i) => {
-    return i % 2 === 0 ? h * 0.2 : h * 0.8; 
+const calcDotStartX = (i) => {
+    return i % 2 === 0 ? 0 + doorWidth : w - doorWidth; 
 }
 
 const calcDotStationPos = (i) => {
     // y needs to go from the start of the column, we want it reversed so dots build up from the bottom 
-    let indexInCol = numParticlesInCol - (i % numParticlesInCol);
+    let indexInRow = numParticlesInRow - (i % numParticlesInRow);
     // start at the side closest to the train
-    let colIndex = Math.floor(i / numParticlesInCol)
-    let colNum =  numColsInStation - colIndex;  // round down to get column number
+    let rowNum = Math.floor(i / numParticlesInRow)
 
-    let y = indexInCol * particleSpacing + particleOffset;
-    let x = colNum * particleSpacing + particleOffset;
+    let y = stationH - (rowNum * particleSpacing) - particleSpacing;//rowNum * particleSpacing;
+    let x = indexInRow * particleSpacing + doorWidth + (doorPadding *2);
     return {x, y}; 
 }
 
 const calcDotTrain = (indx) => Math.ceil((indx + 1) / dotsPerTrain); // add one to avoid zero-index
+
+// const calcTrainArriveDelay = () => 
+
+class Train {
+    constructor (indx) {
+        this.x = -numCarriages * carriageLength + -numCarriages * carriagePadding;
+        this.y = stationH;
+        this.midX = particleOffset;
+        this.startDelay = timeToStation - trainTimeToArrive;  //  why is this not this?-> timeToStation - trainTimeToArrive;
+        this.trainNumber = indx + 1; // bumping up so not zero-based
+        this.animation = setUpTrainAnimation(this);
+    }
+    draw (ctx) {
+        drawTrain(ctx, this.x, this.y);
+    }
+}
+
 
 class Particle {
     constructor(startX, startY, midX, midY, startDelay, train, index) {
@@ -112,12 +119,21 @@ class Particle {
 const createParticles = () => {
     arrParticles = [];
     for (let i = 0; i < numParticles; i++) {
-        let startY = calcDotStartY(i);
+        let startX = calcDotStartX(i);
+        let startY = h * doorPosition + (doorHeight / 2);
         let {x, y} = calcDotStationPos(i);
         let train = calcDotTrain(i);
-        arrParticles.push(new Particle(particleOffset, startY, x, y, startDelay, train, i));
+        arrParticles.push(new Particle(startX, startY, x, y, startDelay, train, i));
         startDelay += startDelayInterval;
         train > currentTrain && currentTrain++; // bump currentTrain if previous ran out of space
+    }
+}
+
+// create trains 
+const createTrains = () => {
+    arrTrains = [];
+    for(let i=0; i < numberOfTrains; i++){
+        arrTrains.push(new Train(i));
     }
 }
 
@@ -131,6 +147,9 @@ const render = () => {
     setUpStation(ctx);
     arrParticles.forEach((particle) => {
         particle.draw(ctx);
+    })
+    arrTrains.forEach((train) =>  {
+        train.draw(ctx);
     })
 }
 
@@ -155,6 +174,7 @@ const run = () => {
     tickClock();
     startDelay = 0;
     createParticles();
+    createTrains();
 
     //start clock and start gsap ticker
     const startClock = () => clockIntrvl = setInterval(tickClock, timePerMin);
