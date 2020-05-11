@@ -12,9 +12,6 @@ const adjustedW = canvasWrapper.offsetWidth;
 const isWide = adjustedW > 550;
 const adjustedH = isWide ? 450 : 300;
 
-console.log("el width is --->", adjustedW );
-
-
 // CHANGE THESE VARIABLES
 const numParticles = 1005;
 const numberOfTrains = 24; //? 24

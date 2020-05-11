@@ -1,13 +1,13 @@
 import gsap from "gsap";
-import {numParticles, numberOfTrains, canvas, ctx, clock, toggle, toggleLabel, runButton, canvasConfig, particleConfig, particleSpacing, numParticlesInRow,
+import {numParticles, numberOfTrains, canvas, ctx, clock, runButton, canvasConfig, particleConfig, particleSpacing, numParticlesInRow,
     animationConfig, timeToStationMs, trainInterval, trainH} from "./constants.js"
+import {dotsPerTrain} from "./distanced-config.js"
 import {setUpAnimation, setUpTrainAnimation} from "./animation.js"
 import {roundedRect, drawDoors, drawTrain} from "./background.js"
 
 const {w, h, stationH, doorPosition, doorWidth, doorHeight, doorPadding, carriageLength, carriagePadding, numCarriages, trackHeight} = canvasConfig;
 const {particleRadius, particleOffset, particleColor} = particleConfig;
 const {timeToStation, waitForTrain, trainTimeToArrive} = animationConfig; 
-
 
 // set up canvas
 canvas.width = w;
@@ -17,7 +17,7 @@ CanvasRenderingContext2D.prototype.roundedRect = roundedRect;
 
 
 // CHANGE THIS VARIABLE 
-let dotsPerTrain = 42;
+// let dotsPerTrain = 42;
 
 // Timer consts 
 const totalTime = numberOfTrains * trainInterval; // NB not including time to station
@@ -136,11 +136,6 @@ const createTrains = () => {
     }
 }
 
-const toggleDistancing = (e) => { 
-    dotsPerTrain = e.target.checked ? 7 : 42;
-    toggleLabel.textContent = (e.target.checked ? "with social distancing" : "normally");
-}
-
 const render = () => {
     ctx.clearRect(0, 0, w, h);
     setUpStation(ctx);
@@ -181,7 +176,12 @@ const run = () => {
     gsap.ticker.add(render);
 }
 
-toggle.addEventListener("input", toggleDistancing, false);
+// const toggleDistancing = (e) => { 
+//     dotsPerTrain = e.target.checked ? 7 : 42;
+//     toggleLabel.textContent = (e.target.checked ? "with social distancing" : "normally");
+// }
+
+// toggle.addEventListener("input", toggleDistancing, false);
 runButton.addEventListener("click", run, false);
 
 window.onload = ()=> {

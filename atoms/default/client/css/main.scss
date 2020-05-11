@@ -14,26 +14,25 @@ h1, h2, h3 {
     }
 }
 
-
 body {
     @include f-bodyCopy;
 }
 
 // Numbers
+
+.clock {
+    color: #052962;
+    margin: .2em 0 .1em 0;
+}
+
 span#clock {
     @include fs-titlepiece(1);
     font-size: 32px;
     line-height: 1;
 }
-.clock {
-    color: #052962; 
-}
+
 #toggle-label {
     padding: .4em 0 0 .3em;
-}
-
-h3, h3 {
-    margin: .2em 0;
 }
 
 small {
