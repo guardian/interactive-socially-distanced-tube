@@ -53,9 +53,9 @@ const numRowsInStation = Math.floor((stationH - particleOffset) / particleSpacin
 const animationConfig = {
     timeToStation : 5,
     waitForTrain : 2,
-    timeToLeave : 0.9,
-    timeToBoard : 0.6,
-    trainTimeToArrive: 0.9,
+    timeToLeave : 0.6,
+    timeToBoard : 0.3,
+    trainTimeToArrive: 0.6,
     afterBoardDelay: 0.3
 }
 
