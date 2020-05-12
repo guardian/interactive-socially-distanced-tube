@@ -144,7 +144,6 @@ const drawAllTrains = (ctx) => arrTrains.forEach((train) => train.draw(ctx)); //
 const clearUp = () => {
     clearInterval(clockIntrvl);
     clearTimeout(clockDelay);
-    isRunning = false;
 }
 
 const run = () => {
