@@ -24,6 +24,7 @@ const calcTrainPosX = () => {
 const setUpAnimation = (particle) => {
     let tl = gsap.timeline()
     const {x, y, train, startDelay, travelTime, gettingOn} = particle;
+    const trainPosX = calcTrainPosX();
 
     tl.to(particle, travelTime, {
             opacity: 1,
@@ -34,13 +35,13 @@ const setUpAnimation = (particle) => {
     
     if(gettingOn){
         tl.to(particle, timeToBoard, {
-            x: calcTrainPosX(),
+            x: trainPosX,
             y: calcTrainPos(),
             delay: calcBoardTrainDelay(train, startDelay, travelTime), //max out at total time.
             ease: "power1.inOut"
           })
         tl.to(particle, timeToLeave, {
-            x: w + x, // move them out at a steady pace ,each covers the same distance
+            x: w + trainPosX, // move them out at a steady pace ,each covers the same distance
             delay: afterBoardDelay,
             ease: "power2.in"
           })

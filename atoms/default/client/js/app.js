@@ -144,13 +144,13 @@ const drawAllTrains = (ctx) => arrTrains.forEach((train) => train.draw(ctx)); //
 const clearUp = () => {
     clearInterval(clockIntrvl);
     clearTimeout(clockDelay);
+    isRunning = false;
 }
 
 const run = () => {
     gsap.ticker.remove(render);
     clearUp();
-    isRunning = true;
-
+    
     // reset modified variables
     clockHour = 8;
     clockMin = 0;
@@ -158,6 +158,8 @@ const run = () => {
     startDelay = 0;
     createParticles();
     createTrains();
+
+    isRunning = true;
 
     //start clock and start gsap ticker
     const startClock = () => clockIntrvl = setInterval(tickClock, timePerMin);
