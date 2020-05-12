@@ -47,7 +47,6 @@ const setUpAnimation = (particle) => {
           })
     } 
     if(!gettingOn){
-        console.log("this part ran");
         tl.to(particle, 0.3, {
             delay: calcTimeTilLastTrainLeaves(startDelay, travelTime),
             fill: "red",

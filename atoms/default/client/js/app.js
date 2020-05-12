@@ -169,6 +169,20 @@ const run = () => {
 
 runButton.addEventListener("click", run, false);
 
+// TRACK SCROLL AND TRIGGER ANIMATION WHEN FULLY VISIBLE
+const checkScroll = () => {
+    try {
+        if(window.frameElement.getBoundingClientRect().top < window.parent.innerHeight * 0.9 && !isRunning) {
+            run()
+        } else {
+            window.requestAnimationFrame(checkScroll)
+        }
+
+    } catch(err) {
+        if(!isRunning) {run()};
+    }
+}
+
 window.onload = ()=> {
     try{
         window.resize();
@@ -178,14 +192,7 @@ window.onload = ()=> {
     setUpStation(ctx);
     createParticles();
     drawAllDots(ctx); 
-    trackScroll();
+    checkScroll()
+    
 };
 
-// TRACK SCROLL AND TRIGGER ANIMATION WHEN VISIBLE
-const trackScroll = () => {
-    if(canvas.getBoundingClientRect().bottom < window.innerHeight && !isRunning) {
-        console.log("track scroll fired")
-        run();
-    }
-    window.requestAnimationFrame(trackScroll);
-  }
