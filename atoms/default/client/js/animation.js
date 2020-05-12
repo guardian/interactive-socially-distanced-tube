@@ -55,6 +55,7 @@ const setUpAnimation = (particle) => {
             yoyo: true,
             repeat: 10
         })
+        tl.pause();
     }
     tl.pause();
     return tl;

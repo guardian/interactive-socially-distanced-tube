@@ -8,7 +8,7 @@ const runButton = document.querySelector("#run");
 
 const adjustedW = canvasWrapper.offsetWidth;
 const isWide = adjustedW > 550;
-const adjustedH = isWide ? 450 : 300;
+const adjustedH = isWide ? 450 : 370;
 
 // CHANGE THESE VARIABLES
 const numParticles = 1005;
@@ -17,10 +17,10 @@ const numberOfTrains = 24;
 const canvasConfig = {
     w : adjustedW,
     h : adjustedH,
-    stationH: isWide ? 375 : 250,
+    stationH: isWide ? 375 : 330,
     trainOffset: isWide ? 25 : 12,
     doorPosition: 0.75,
-    doorWidth: 30,
+    doorWidth: isWide ? 30 : 20,
     doorHeight: 60,
     doorPadding: isWide ? 5 : 0,
     carriageLength: isWide ? 140 : adjustedW / 4.5,
@@ -35,8 +35,8 @@ const spaceInTrain = trainH - (trainOffset * 2);
 
 // Particle consts
 const particleConfig = {
-   particleRadius: isWide ? 5 : 3,
-   particleOffset: isWide ? 10 : 5, //offset from top,
+   particleRadius: isWide ? 5 : 3.5,
+   particleOffset: isWide ? 10 : 3, //offset from top,
    particleColor: "#121212",
    angryParticleColor: "#AB0613",
 }

@@ -22,6 +22,7 @@ const timePerMin = (totalTime / 60) * 1000; // time in milliseconds for each tic
 
 // Timer & train variables modified by code below 
 let isRunning = false;
+let reqAnimFrame;
 let clockHour;
 let clockMin;
 let clockIntrvl;
@@ -172,14 +173,18 @@ runButton.addEventListener("click", run, false);
 // TRACK SCROLL AND TRIGGER ANIMATION WHEN FULLY VISIBLE
 const checkScroll = () => {
     try {
-        if(window.frameElement.getBoundingClientRect().top < window.parent.innerHeight * 0.9 && !isRunning) {
+        if(window.frameElement.getBoundingClientRect().top < window.parent.innerHeight * 0.5 && !isRunning) {
             run()
+            //scrolling to run only works once - ppl can use the restart button after that
+            window.cancelAnimationFrame(reqAnimFrame);
         } else {
-            window.requestAnimationFrame(checkScroll)
+            reqAnimFrame = window.requestAnimationFrame(checkScroll)
         }
 
     } catch(err) {
-        if(!isRunning) {run()};
+        if(!isRunning) {
+            run()
+        };
     }
 }
 
