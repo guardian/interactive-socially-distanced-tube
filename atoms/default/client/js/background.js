@@ -1,6 +1,6 @@
 import {canvasConfig} from "./constants.js"
 
-const {w, h, doorWidth, doorPosition, doorHeight, doorPadding, stationH, carriageLength, carriagePadding} = canvasConfig;
+const {w, h, doorWidth, doorPosition, doorHeight, trainOffset, stationH, carriageLength, carriagePadding} = canvasConfig;
 
 
 const roundedRect = (x, y, width, height, radius, ctx) => 
@@ -54,13 +54,13 @@ const drawTrain = (ctx, startX) => {
     ctx.save();
     ctx.fillStyle = "#000";
 
-    ctx.roundedRect(startX, stationH, carriageLength, (h - stationH), 15, ctx);
+    ctx.roundedRect(startX, 0, carriageLength, (h - stationH), 15, ctx);
 
-    ctx.roundedRect(startX + carriageLength + carriagePadding, stationH, carriageLength, (h - stationH), 15, ctx);
+    ctx.roundedRect(startX + carriageLength + carriagePadding, 0, carriageLength, (h - stationH), 15, ctx);
 
-    ctx.roundedRect(startX + carriageLength * 2 + carriagePadding * 2, stationH, carriageLength, (h - stationH), 15, ctx);
+    ctx.roundedRect(startX + carriageLength * 2 + carriagePadding * 2, 0, carriageLength, (h - stationH), 15, ctx);
 
-    ctx.roundedRect(startX + carriageLength * 3 + carriagePadding * 3, stationH, carriageLength, (h - stationH), 15, ctx);
+    ctx.roundedRect(startX + carriageLength * 3 + carriagePadding * 3, 0, carriageLength, (h - stationH), 15, ctx);
     ctx.stroke()
 
     ctx.restore();

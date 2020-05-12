@@ -4,8 +4,6 @@ const canvasWrapper = document.querySelector(".interactive-wrapper")
 const canvas = document.querySelector("#normal");
 const ctx = canvas.getContext("2d");
 const clock = document.querySelector("#clock");
-const toggle = document.querySelector("#distance-toggle");
-const toggleLabel = document.querySelector("#toggle-label");
 const runButton = document.querySelector("#run");
 
 const adjustedW = canvasWrapper.offsetWidth;
@@ -14,14 +12,14 @@ const adjustedH = isWide ? 450 : 300;
 
 // CHANGE THESE VARIABLES
 const numParticles = 1005;
-const numberOfTrains = 24; //? 24
+const numberOfTrains = 24; 
 
 const canvasConfig = {
     w : adjustedW,
     h : adjustedH,
     stationH: isWide ? 375 : 250,
     trainOffset: isWide ? 25 : 12,
-    doorPosition: 0.05,
+    doorPosition: 0.75,
     doorWidth: 30,
     doorHeight: 60,
     doorPadding: isWide ? 5 : 0,
@@ -33,7 +31,6 @@ const canvasConfig = {
 
 const {w, h, stationH, trainOffset, doorWidth, doorPadding} = canvasConfig;
 const trainH = h - stationH;
-const trainEdge = stationH + trainOffset; // x position of the edge of train plus 10 padding;
 const spaceInTrain = trainH - (trainOffset * 2);
 
 // Particle consts
@@ -51,8 +48,8 @@ const numRowsInStation = Math.floor((stationH - particleOffset) / particleSpacin
 
 // Animation consts 
 const animationConfig = {
-    timeToStation : 5,
-    waitForTrain : 2,
+    timeToStation : 1,
+    waitForTrain : 0.3,
     timeToLeave : 0.6,
     timeToBoard : 0.3,
     trainTimeToArrive: 0.6,
@@ -66,7 +63,7 @@ const trainInterval = trainTimeToArrive +  timeToBoard + afterBoardDelay + timeT
 
 
 export {numParticles, numberOfTrains, 
-    canvas, ctx, clock, toggle, toggleLabel, runButton,
-    canvasConfig, trainH, trainEdge, spaceInTrain,
+    canvas, ctx, clock, runButton,
+    canvasConfig, trainH, spaceInTrain,
     particleConfig, particleSpacing, numParticlesInRow, numRowsInStation,
     animationConfig, timeToStationMs, trainInterval}

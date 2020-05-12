@@ -1,7 +1,7 @@
 import gsap from "gsap";
-import {canvasConfig, trainEdge, spaceInTrain, animationConfig, numberOfTrains, trainInterval} from "./constants.js"
+import {canvasConfig, spaceInTrain, animationConfig, numberOfTrains, trainInterval} from "./constants.js"
 
-const {w} = canvasConfig;
+const {w, trainOffset} = canvasConfig;
 const {timeToStation, timeToLeave, timeToBoard, trainTimeToArrive, afterBoardDelay} = animationConfig; 
 
 const calcBoardTrainDelay = (train, delay, travelTime) => {
@@ -15,17 +15,17 @@ const calcTimeTilLastTrainLeaves = (delay, travelTime) => {
     return base + timeToLeave + timeToBoard + (trainInterval * numberOfTrains);
 }
 
-const calcTrainPos = () => trainEdge + Math.random() * spaceInTrain;
+const calcTrainPos = () => trainOffset + Math.random() * spaceInTrain;
 
 const setUpAnimation = (particle) => {
     let tl = gsap.timeline()
-    const {train, startDelay, travelTime, midX, midY, gettingOn} = particle;
+    const {x, y, train, startDelay, travelTime, gettingOn} = particle;
 
     tl.to(particle, travelTime, {
-            x: midX,
-            y: midY,
+            opacity: 1,
             delay: startDelay,
-            ease: "rough"
+            y: y-2,
+            yoyo: true,
           }) 
     
     if(gettingOn){
@@ -35,21 +35,23 @@ const setUpAnimation = (particle) => {
             ease: "power1.inOut"
           })
         tl.to(particle, timeToLeave, {
-            x: w + midX, // move them out at a steady pace ,each covers the same distance
+            x: w + x, // move them out at a steady pace ,each covers the same distance
             delay: afterBoardDelay,
             ease: "power2.in"
           })
     } 
     if(!gettingOn){
+        console.log("this part ran");
         tl.to(particle, 0.3, {
             delay: calcTimeTilLastTrainLeaves(startDelay, travelTime),
             fill: "red",
-            x: midX + Math.random() * 3,
-            y: midY + Math.random() * 3,
+            x: x + Math.random() * 3,
+            y: y + Math.random() * 3,
             yoyo: true,
             repeat: 10
         })
     }
+    tl.pause();
     return tl;
 }
 

@@ -5,7 +5,7 @@ import {dotsPerTrain} from "./distanced-config.js"
 import {setUpAnimation, setUpTrainAnimation} from "./animation.js"
 import {roundedRect, drawDoors, drawTrain} from "./background.js"
 
-const {w, h, stationH, doorPosition, doorWidth, doorHeight, doorPadding, carriageLength, carriagePadding, numCarriages, trackHeight} = canvasConfig;
+const {w, h, stationH, doorWidth, doorPadding, carriageLength, carriagePadding, numCarriages, trackHeight, trainOffset} = canvasConfig;
 const {particleRadius, particleOffset, particleColor} = particleConfig;
 const {timeToStation, waitForTrain, trainTimeToArrive} = animationConfig; 
 
@@ -15,9 +15,6 @@ canvas.height = h;
 // weird hack for rounded rectangles 
 CanvasRenderingContext2D.prototype.roundedRect = roundedRect;
 
-
-// CHANGE THIS VARIABLE 
-// let dotsPerTrain = 42;
 
 // Timer consts 
 const totalTime = numberOfTrains * trainInterval; // NB not including time to station
@@ -33,14 +30,14 @@ let currentTrain = 1;
 let arrParticles = [];
 let arrTrains = [];
 let startDelay = 0; 
-// everyone should get there 2 seconds before train leaves, eg everyone gets there in 3 secs.
+// everyone should get there before train leaves, eg everyone gets there in 3 secs.
 let startDelayInterval = (timeToStation - waitForTrain) / numParticles;
 
 
 const setUpStation = (ctx) => {
     //draw train tracks
     ctx.fillStyle = "#F6F6F6";
-    ctx.fillRect(0, h - (trainH /2 + trackHeight/2) , w, trackHeight);
+    ctx.fillRect(0, (trainH /2 - trackHeight/2) , w, trackHeight);
 
     drawDoors(ctx);
 }
@@ -58,17 +55,12 @@ const tickClock = () => {
     clockMin++;
 }
 
-// start it out from one door or another 
-const calcDotStartX = (i) => {
-    return i % 2 === 0 ? 0 + doorWidth : w - doorWidth; 
-}
-
 const calcDotStationPos = (i) => {
     // y needs to go from the start of the column, we want it reversed so dots build up from the bottom 
     let indexInRow = numParticlesInRow - (i % numParticlesInRow);
     let rowNum = Math.floor(i / numParticlesInRow)
 
-    let y = stationH - (rowNum * particleSpacing) - particleSpacing;
+    let y = trainH + (rowNum * particleSpacing) + particleSpacing;
     let x = indexInRow * particleSpacing + doorWidth + (doorPadding *2);
     return {x, y}; 
 }
@@ -78,9 +70,8 @@ const calcDotTrain = (indx) => Math.ceil((indx + 1) / dotsPerTrain); // add one 
 class Train {
     constructor (indx) {
         this.x = -numCarriages * carriageLength + -numCarriages * carriagePadding;
-        this.y = stationH;
         this.midX = particleOffset;
-        this.startDelay = timeToStation - trainTimeToArrive;  //  why is this not this?-> timeToStation - trainTimeToArrive;
+        this.startDelay = timeToStation - trainTimeToArrive;
         this.trainNumber = indx + 1; // bumping up so not zero-based
         this.animation = setUpTrainAnimation(this);
     }
@@ -91,23 +82,23 @@ class Train {
 
 
 class Particle {
-    constructor(startX, startY, midX, midY, startDelay, train, index) {
+    constructor(startX, startY, startDelay, train, index) {
         this.x = startX;
         this.y = startY;
-        this.midX = midX;
-        this.midY = midY;
         this.train = train;
         this.index = index;
         this.startDelay = startDelay;
         this.fill = particleColor;
         this.gettingOn = train <= numberOfTrains;
         this.travelTime = Math.random() * (timeToStation - waitForTrain);
+        this.opacity = 1;
         this.animation = setUpAnimation(this)
     }
     draw (ctx){
         ctx.save();
         ctx.beginPath();
         ctx.fillStyle = this.fill;
+        ctx.fillOpacity = this.opacity;
         ctx.arc(this.x, this.y, particleRadius, 0, 2 * Math.PI, false);
         ctx.fill()
     }
@@ -118,11 +109,9 @@ class Particle {
 const createParticles = () => {
     arrParticles = [];
     for (let i = 0; i < numParticles; i++) {
-        let startX = calcDotStartX(i);
-        let startY = h * doorPosition + (doorHeight / 2);
         let {x, y} = calcDotStationPos(i);
         let train = calcDotTrain(i);
-        arrParticles.push(new Particle(startX, startY, x, y, startDelay, train, i));
+        arrParticles.push(new Particle(x, y, startDelay, train, i));
         startDelay += startDelayInterval;
         train > currentTrain && currentTrain++; // bump currentTrain if previous ran out of space
     }
@@ -139,19 +128,18 @@ const createTrains = () => {
 const render = () => {
     ctx.clearRect(0, 0, w, h);
     setUpStation(ctx);
-    arrParticles.forEach((particle) => {
-        particle.draw(ctx);
-    })
-    arrTrains.forEach((train) =>  {
-        train.draw(ctx);
-    })
+    drawAllDots(ctx);
+    playAllDots();
+    drawAllTrains(ctx);
 }
 
-const pauseAll = () => {
-    arrParticles.forEach((particle) => {
-        particle.animation.pause();
-    }) 
-}
+const drawAllDots = (ctx) => arrParticles.forEach((particle) => particle.draw(ctx)) 
+const playAllDots = () => arrParticles.forEach((particle) => particle.animation.play()) // dots are paused by default
+
+const pauseAllDots = () => arrParticles.forEach((particle) => particle.animation.pause()) 
+
+const drawAllTrains = (ctx) => arrTrains.forEach((train) => train.draw(ctx)); // trains run by default
+
 
 const clearUp = () => {
     clearInterval(clockIntrvl);
@@ -173,24 +161,20 @@ const run = () => {
     //start clock and start gsap ticker
     const startClock = () => clockIntrvl = setInterval(tickClock, timePerMin);
     clockDelay = window.setTimeout(startClock, timeToStationMs);
+    playAllDots();
     gsap.ticker.add(render);
 }
 
-// const toggleDistancing = (e) => { 
-//     dotsPerTrain = e.target.checked ? 7 : 42;
-//     toggleLabel.textContent = (e.target.checked ? "with social distancing" : "normally");
-// }
-
-// toggle.addEventListener("input", toggleDistancing, false);
 runButton.addEventListener("click", run, false);
 
 window.onload = ()=> {
     try{
         window.resize();
-        
     } catch {
         console.log("not in a iframe");
     }
     setUpStation(ctx);
+    createParticles();
+    drawAllDots(ctx); 
     // run()
 };

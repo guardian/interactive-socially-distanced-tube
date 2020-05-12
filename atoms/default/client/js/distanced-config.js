@@ -2,9 +2,6 @@
 // For normal
 // export const dotsPerTrain = 42;
 
-import { _config } from "gsap/gsap-core";
-
-
 // For distanced 
 export const dotsPerTrain = 7;
 
