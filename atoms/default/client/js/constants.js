@@ -24,7 +24,7 @@ const canvasConfig = {
     doorHeight: 60,
     doorPadding: isWide ? 5 : 0,
     carriageLength: isWide ? 140 : adjustedW / 4.5,
-    carriagePadding: 2,
+    carriagePadding: 1,
     numCarriages: 4,
     trackHeight: 15,
 }

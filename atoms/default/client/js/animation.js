@@ -1,7 +1,7 @@
 import gsap from "gsap";
 import {canvasConfig, spaceInTrain, animationConfig, numberOfTrains, trainInterval} from "./constants.js"
 
-const {w, trainOffset} = canvasConfig;
+const {w, trainOffset, carriageLength} = canvasConfig;
 const {timeToStation, timeToLeave, timeToBoard, trainTimeToArrive, afterBoardDelay} = animationConfig; 
 
 const calcBoardTrainDelay = (train, delay, travelTime) => {
@@ -16,6 +16,10 @@ const calcTimeTilLastTrainLeaves = (delay, travelTime) => {
 }
 
 const calcTrainPos = () => trainOffset + Math.random() * spaceInTrain;
+const calcTrainPosX = () => {
+    let pos = (carriageLength * 4) * Math.random();
+    return pos < trainOffset ? trainOffset : pos;
+}
 
 const setUpAnimation = (particle) => {
     let tl = gsap.timeline()
@@ -30,6 +34,7 @@ const setUpAnimation = (particle) => {
     
     if(gettingOn){
         tl.to(particle, timeToBoard, {
+            x: calcTrainPosX(),
             y: calcTrainPos(),
             delay: calcBoardTrainDelay(train, startDelay, travelTime), //max out at total time.
             ease: "power1.inOut"
@@ -71,7 +76,6 @@ const setUpTrainAnimation = (train) => {
         delay: timeToBoard + afterBoardDelay,
         ease: "power2.in"
     })
-
 }
 
 export {setUpAnimation, setUpTrainAnimation};

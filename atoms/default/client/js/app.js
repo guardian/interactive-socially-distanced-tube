@@ -5,7 +5,7 @@ import {dotsPerTrain} from "./distanced-config.js"
 import {setUpAnimation, setUpTrainAnimation} from "./animation.js"
 import {roundedRect, drawDoors, drawTrain} from "./background.js"
 
-const {w, h, stationH, doorWidth, doorPadding, carriageLength, carriagePadding, numCarriages, trackHeight, trainOffset} = canvasConfig;
+const {w, h, doorWidth, doorPadding, carriageLength, carriagePadding, numCarriages, trackHeight} = canvasConfig;
 const {particleRadius, particleOffset, particleColor} = particleConfig;
 const {timeToStation, waitForTrain, trainTimeToArrive} = animationConfig; 
 
@@ -21,6 +21,7 @@ const totalTime = numberOfTrains * trainInterval; // NB not including time to st
 const timePerMin = (totalTime / 60) * 1000; // time in milliseconds for each tick of the clock
 
 // Timer & train variables modified by code below 
+let isRunning = false;
 let clockHour;
 let clockMin;
 let clockIntrvl;
@@ -56,7 +57,6 @@ const tickClock = () => {
 }
 
 const calcDotStationPos = (i) => {
-    // y needs to go from the start of the column, we want it reversed so dots build up from the bottom 
     let indexInRow = numParticlesInRow - (i % numParticlesInRow);
     let rowNum = Math.floor(i / numParticlesInRow)
 
@@ -149,6 +149,7 @@ const clearUp = () => {
 const run = () => {
     gsap.ticker.remove(render);
     clearUp();
+    isRunning = true;
 
     // reset modified variables
     clockHour = 8;
@@ -176,5 +177,14 @@ window.onload = ()=> {
     setUpStation(ctx);
     createParticles();
     drawAllDots(ctx); 
-    // run()
+    trackScroll();
 };
+
+// TRACK SCROLL AND TRIGGER ANIMATION WHEN VISIBLE
+const trackScroll = () => {
+    if(canvas.getBoundingClientRect().bottom < window.innerHeight && !isRunning) {
+        console.log("track scroll fired")
+        run();
+    }
+    window.requestAnimationFrame(trackScroll);
+  }
