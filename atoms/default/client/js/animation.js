@@ -45,6 +45,7 @@ const setUpAnimation = (particle) => {
             delay: afterBoardDelay,
             ease: "power2.in"
           })
+        tl.pause();
     } 
     if(!gettingOn){
         tl.to(particle, 0.3, {

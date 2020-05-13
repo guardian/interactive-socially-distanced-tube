@@ -102,6 +102,7 @@ class Particle {
         ctx.fillOpacity = this.opacity;
         ctx.arc(this.x, this.y, particleRadius, 0, 2 * Math.PI, false);
         ctx.fill()
+        ctx.restore();
     }
 }
 
@@ -171,9 +172,12 @@ const run = () => {
 runButton.addEventListener("click", run, false);
 
 // TRACK SCROLL AND TRIGGER ANIMATION WHEN FULLY VISIBLE
+let iframeTop;
+
 const checkScroll = () => {
+    iframeTop = window.frameElement.getBoundingClientRect().top;
     try {
-        if(window.frameElement.getBoundingClientRect().top < window.parent.innerHeight * 0.5 && !isRunning) {
+        if(iframeTop < window.parent.innerHeight * 0.5 && !isRunning) {
             run()
             //scrolling to run only works once - ppl can use the restart button after that
             window.cancelAnimationFrame(reqAnimFrame);
